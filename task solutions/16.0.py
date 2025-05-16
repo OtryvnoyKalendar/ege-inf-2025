@@ -15,4 +15,4 @@ def g(n):
         return f(n - 1) + g(n-1) + n
 
 res = sum([int(x) for x in str(g(36))])
-print(res)
+print(res) # 40
