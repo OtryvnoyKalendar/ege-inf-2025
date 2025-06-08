@@ -6,8 +6,6 @@ left(90)
 speed(0)
 tracer(0)
 screensize(2000, 2000)
-onkeypress(bye, "Escape")
-listen()
 
 down()
 for _ in range(7):
@@ -22,8 +20,6 @@ for x in range(-a, a):
         goto(x * k, y * k)
         dot(4, "red")
 
-# базовые настройки
-update()
-done()
+exitonclick()
 
 "ответ: 38"
