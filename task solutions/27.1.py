@@ -1,60 +1,59 @@
-with open("27.1b.txt") as file:
-    dots = [tuple(map(float, x.replace(",", ".").split())) for x in file]
+# 1
+file = open("tm24/27B_18677.txt")
+# x = file.readline() # если есть X Y в начале файла
+# print(x)
+data = [tuple(map(float, x.replace(",", ".").split())) for x in file]
 
-print(len(dots))
+print(len(data))
 
-def dist(p1, p2):
-    x1, y1, x2, y2 = *p1, *p2
-    return ((x1 - x2)**2 + (y1 - y2)**2)**0.5
+# 2
+from math import dist
+# или своя функция
 
-def get_cluster(p0):
-    cluster = [p for p in dots if dist(p0, p) < 0.5]
-    if len(cluster) > 0:
-        for p in cluster:
-            dots.remove(p)
-        next_cluster = [get_cluster(p) for p in cluster]
-        cluster = cluster + sum(next_cluster, [])
-
-    return cluster
-
+# 3
 clusters = []
-while len(dots) > 0:
-    p0 = dots.pop()
-    cluster = [p0] + get_cluster(p0)
-    print("len =", len(cluster))
+while data:
+    cluster = [data.pop()]
+    for p in cluster:
+        soseds = [p1 for p1 in data if dist(p1, p) < 0.8]
+        cluster += soseds
+        for p1 in soseds:
+            data.remove(p1)
     clusters.append(cluster)
 
-def center(cluster):
-    m = []
+res = [len(cluster) for cluster in clusters]
+print(res, sum(res))
+
+# 4
+from turtle import *
+from random import random
+tracer(0)
+up()
+sc = 25
+screensize(4000, 4000)
+for cluster in clusters:
+    color = random(), random(), random()
+    for x,y in cluster:
+        goto(x*sc, y*sc)
+        dot(5, color)
+exitonclick()
+
+# иногда нужна проверка на аномалии
+clusters = [x for x in clusters if len(x) >= 30]
+
+# 5
+def get_center(cluster):
+    res = []
     for p in cluster:
-        dist_sum = sum(dist(p, p1) for p1 in cluster)
-        m.append([dist_sum, p])
-    return min(m)[1]
+        dist_sum = sum([dist(p1, p) for p1 in cluster])
+        res.append((dist_sum, p))
+    return min(res)[1]
 
-centers = [center(cluster) for cluster in clusters]
-print([dot for dot in centers])
+# 6
 n = len(clusters)
-px = sum(dot[0] for dot in centers)
-py = sum(dot[1] for dot in centers)
-print(int(px/n*10_000), int(py/n*10_000))
+centers = [get_center(cluster) for cluster in clusters]
+px = sum(x for x,y in centers)/n
+py = sum(y for x,y in centers)/n
+print(int(abs(px*100_000)), int(abs(py*100_000)))
 
-"""
-A
-100
-len = 50
-len = 50
-[[5.51307169163416, 3.4700254913283], [0.898104452045083, 8.14956810985959]]
-32055 58097
-"""
 
-"""
-B
-9999
-len = 3333
-len = 3333
-len = 3333
-[(1.35010146710459, 0.441722700965479),
-(6.31722662214146, 3.20304212607331),
-(1.89859074279227, 4.10549409017268)]
-31886 25834
-"""
