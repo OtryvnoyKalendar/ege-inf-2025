@@ -1,14 +1,17 @@
- # r - какой ход мы сделали в прошлый раз
-def f(a, b, r):
-    if a == b:
+# prev - это предыдущий ход 
+# def f(cur, end, prev):
+def f(cur, prev):
+    end = 18
+    if cur == end:
         return True
-    if a > b:
+
+    if cur > end:
         return False
+    else:
+        if prev == '+1':
+            return f(cur + 2, '+2') + f(cur * 2, '*2')
+        else:
+            return f(cur + 2, '+2') + f(cur * 2, '*2') + f(cur + 1, '+1')
 
-    if a < b and r == '+1':
-        return f(a + 2, b, '+2') + f(a * 2, b, '*2')
-    if a < b and r != '+1':
-        return f(a + 2, b, '+2') + f(a * 2, b, '*2') + f(a + 1, b, '+1')
-
-print(f(1, 18, ''))
+print(f(1, ''))
 # Ответ: 478
